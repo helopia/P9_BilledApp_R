@@ -7,10 +7,15 @@ import BillsUI from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"
 import {ROUTES, ROUTES_PATH} from "../constants/routes.js";
 import {localStorageMock} from "../__mocks__/localStorage.js";
-
+import mockStore from "../__mocks__/store.js"
 import router from "../app/Router.js";
 import Bills from "../containers/Bills.js";
 import {sessionStorageMock} from "../__mocks__/sessionStorage.js";
+import userEvent from "@testing-library/user-event";
+
+
+jest.mock("../app/store", () => mockStore)
+
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
@@ -57,4 +62,40 @@ describe("When I click on new bill button ", () => {
     const modale = screen.getAllByTestId("form-new-bill");
     expect(modale).toBeTruthy();
   })
+})
+/* test action et affichage modale quand clic icône oeil bleu */
+describe("When I click on the blue eye icon", () => {
+  test("Then modal should be displayed with its content", async () => {
+    sessionStorageMock('Employee')
+    document.body.innerHTML='<div id="root"></div>'
+    router()
+    window.onNavigate(ROUTES_PATH.Bills)
+    const onNavigate = (pathname) => {document.body.innerHTML = ROUTES({ pathname })}
+    $.fn.modal= jest.fn(function() {this[0].classList.add('show') })
+    const billsList = new Bills({document, onNavigate, store : mockStore, localStorage: null})
+    const bills = await billsList.getBills()
+    document.body.innerHTML = BillsUI({ data: bills })
+    const firstEye = screen.getAllByTestId("icon-eye").shift()
+    const handleClickIconEye = jest.fn(() => billsList.handleClickIconEye(firstEye))
+    firstEye.addEventListener('click', handleClickIconEye)
+    userEvent.click(firstEye)
+    /* vérification de l'appel de la fonction handleClickIconEye */
+    expect(handleClickIconEye).toBeCalled()
+    /* vérification de l'affichage de la modale par la présence de la classe .show */
+    expect(document.querySelector(".show")).toBeTruthy()
+  })
+})
+/* Test d'intégration GET */
+test("fetches bills from mock API GET", async () => {
+  sessionStorageMock('Employee')
+  document.body.innerHTML='<div id="root"></div>'
+  router()
+  window.onNavigate(ROUTES_PATH.Bills)
+  const onNavigate = (pathname) => {document.body.innerHTML = ROUTES({ pathname })}
+  const billsList = new Bills({document, onNavigate, store : mockStore, localStorage: null})
+  const bills = await billsList.getBills()
+  document.body.innerHTML = BillsUI({ data: bills })
+  const billsCount  = screen.getByTestId("tbody").childElementCount
+  /* Vérification si les 4 bills du mock sont récupérées*/
+  expect(billsCount).toEqual(4)
 })
