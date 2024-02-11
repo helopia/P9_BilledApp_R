@@ -40,21 +40,21 @@ describe("Given I am connected as an employee", () => {
   })
 })
 /* action et affichage modale quand clic bouton "nouvelle note de frais" */
-// describe("When I click on new bill button ", () => {
-//   test("Then a modal should open", () => {
-//     sessionStorageMock('Employee')
-//     document.body.innerHTML = BillsUI({data: bills,});
-//     const onNavigate = (pathname) => {document.body.innerHTML = ROUTES({ pathname, }); };
-//     const newBill = new Bills({ document, onNavigate, store: null, bills, localStorage: localStorageMock})
-//     const handleClickNewBill = jest.fn((e) => newBill.handleClickNewBill(e, bills))
-//     const iconNewBill = screen.getByTestId("btn-new-bill");
-//     iconNewBill.addEventListener("click", handleClickNewBill);
-//     fireEvent.click(iconNewBill);
-//     /* vérification de l'appel de la fonction handleClickNewBill */
-//     expect(handleClickNewBill).toHaveBeenCalled();
-//     /* vérification de l'affichage de la modale par la présence du noeud DOM
-//     id="form-new-bill") */
-//     const modale = screen.getAllByTestId("form-new-bill");
-//     expect(modale).toBeTruthy();
-//   })
-// })
+describe("When I click on new bill button ", () => {
+  test("Then a modal should open", () => {
+    sessionStorageMock('Employee')
+    document.body.innerHTML = BillsUI({data: bills,});
+    const onNavigate = (pathname) => {document.body.innerHTML = ROUTES({ pathname, }); };
+    const newBill = new Bills({ document, onNavigate, store: null, bills, localStorage: localStorageMock})
+    const handleClickNewBill = jest.fn((e) => newBill.handleClickNewBill(e, bills))
+    const iconNewBill = screen.getByTestId("btn-new-bill");
+    iconNewBill.addEventListener("click", handleClickNewBill);
+    fireEvent.click(iconNewBill);
+    /* vérification de l'appel de la fonction handleClickNewBill */
+    expect(handleClickNewBill).toHaveBeenCalled();
+    /* vérification de l'affichage de la modale par la présence du noeud DOM
+    id="form-new-bill") */
+    const modale = screen.getAllByTestId("form-new-bill");
+    expect(modale).toBeTruthy();
+  })
+})
