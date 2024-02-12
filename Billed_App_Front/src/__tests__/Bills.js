@@ -84,18 +84,19 @@ describe("When I click on the blue eye icon", () => {
     /* vérification de l'affichage de la modale par la présence de la classe .show */
     expect(document.querySelector(".show")).toBeTruthy()
   })
+  /* Test d'intégration GET */
+  test("fetches bills from mock API GET", async () => {
+    sessionStorageMock('Employee')
+    document.body.innerHTML='<div id="root"></div>'
+    router()
+    window.onNavigate(ROUTES_PATH.Bills)
+    const onNavigate = (pathname) => {document.body.innerHTML = ROUTES({ pathname })}
+    const billsList = new Bills({document, onNavigate, store : mockStore, localStorage: null})
+    const bills = await billsList.getBills()
+    document.body.innerHTML = BillsUI({ data: bills })
+    const billsCount  = screen.getByTestId("tbody").childElementCount
+    /* Vérification si les 4 bills du mock sont récupérées*/
+    expect(billsCount).toEqual(4)
+  })
 })
-/* Test d'intégration GET */
-test("fetches bills from mock API GET", async () => {
-  sessionStorageMock('Employee')
-  document.body.innerHTML='<div id="root"></div>'
-  router()
-  window.onNavigate(ROUTES_PATH.Bills)
-  const onNavigate = (pathname) => {document.body.innerHTML = ROUTES({ pathname })}
-  const billsList = new Bills({document, onNavigate, store : mockStore, localStorage: null})
-  const bills = await billsList.getBills()
-  document.body.innerHTML = BillsUI({ data: bills })
-  const billsCount  = screen.getByTestId("tbody").childElementCount
-  /* Vérification si les 4 bills du mock sont récupérées*/
-  expect(billsCount).toEqual(4)
-})
+
